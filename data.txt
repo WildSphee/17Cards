@@ -1,0 +1,9 @@
+
+(9, 'five-of-a-kind') 		 100.00
+(8, 'straight-flush') 		 100.00
+(7, 'four-of-a-kind') 		 98.23
+(4, 'straight') 		     95.56
+(6, 'full-house') 		     88.46
+(3, 'three-of-a-kind') 		 74.14
+(2, 'two-pair') 	     	 32.29
+(1, 'one-pair') 		     11.88

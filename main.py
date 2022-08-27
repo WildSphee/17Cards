@@ -2,6 +2,7 @@ from itertools import product
 from random import shuffle
 from collections import Counter
 
+
 flower = {'♠': 3,
           '♥': 2,
           '♣': 1,
@@ -61,7 +62,6 @@ def handValue(hand) -> tuple:
     isfullhouse = True if (isthreeofakind and len(cardv) == 2) else False
     istwopair = True if (list(cardv.values())[-1] == 2 and list(cardv.values())[-2] == 2 and not havejoker) else False
 
-    combo_number = 10
     if isfiveofakind:
         combo_number = 0
     elif isflush and isstraight:
@@ -92,6 +92,26 @@ def createDeck() -> list:
     deck.append(Card('K', '♠', joker=True))
     return deck
 
+def compareHands(hand1, hand2) -> int:
+
+    # combo is a tuple (combo value, combo name), maxv is int of highest card value
+    hand1v = handValue(hand1)
+    hand2v = handValue(hand2)
+
+    # print(f'hand1: {hand1} \t - {hand1v[0][1]} \nhand2: {hand2} \t - {hand2v[0][1]}')
+    if hand1v[0][0] > hand2v[0][0]:
+        # print('hand1 wins')
+        return 0
+    elif hand1v[0][0] < hand2v[0][0]:
+        # print('hand2 wins')
+        return 1
+    else:
+        if hand1v[1] > hand2v[1]:
+            # print('same combo, hand 1 has highest value card and wins')
+            return 0
+        else:
+            # print('same combo, hand 2 has highest value card and wins')
+            return 1
 
 # s for simulate, one game where two players have a hand
 def s_OneGame():
@@ -106,43 +126,141 @@ def s_OneGame():
     hand1 = [deck.pop(0) for _ in range(5)]
     hand2 = [deck.pop(0) for _ in range(5)]
 
-    # combo is a tuple (combo value, combo name), maxv is int of highest card value
-    hand1v = handValue(hand1)
-    hand2v = handValue(hand2)
+    compareHands(hand1, hand2)
 
-    print(f'hand1: {hand1} \t - {hand1v[0][1]} \nhand2: {hand2} \t - {hand2v[0][1]}')
-    if hand1v[0][0] > hand2v[0][0]:
-        print('hand1 wins')
-    elif hand1v[0][0] < hand2v[0][0]:
-        print('hand2 wins')
-    else:
-        if hand1v[1] > hand2v[1]:
-            print('same combo, hand 1 has highest value card and wins')
-        else:
-            print('same combo, hand 2 has highest value card and wins')
-
+# the probability of getting each type of combo in a hand in the first round
 def s_ProbOneHand():
 
     result = []
-    iterations = 5000000
+    iterations = 1_000_000
 
     for _ in range(iterations):
         deck = createDeck()
         shuffle(deck)
         hand = [deck.pop(0) for _ in range(5)]
 
-        # k = handValue(hand)[0]
-        # if k[0] == 8:
-        #     print(hand)
-
         result.append(handValue(hand)[0])
-
 
     result = dict(Counter(result))
     result = dict(sorted(result.items(), key=lambda item: item[1], reverse=True))
     for k, v in result.items():
         print(f'{k} \t\t {v/iterations*100:.2f}%')
 
+# when playing with another player, the chance of winning by combo type
+def s_TwoHandWinChanceByType():
+    result = []
+    iterations = 1_000_000
+
+    for _ in range(iterations):
+        deck = createDeck()
+        shuffle(deck)
+        hand1 = [deck.pop(0) for _ in range(5)]
+        hand2 = [deck.pop(0) for _ in range(5)]
+
+        win = True if compareHands(hand1, hand2) == 0 else False
+        result.append((handValue(hand1)[0], win))
+
+    result = dict(Counter(result))
+    result = dict(sorted(result.items(), key=lambda item: item[0][1], reverse=True))
+
+    chances = {}
+    for k, v in result.items():
+        if k[1]:
+            if result.get((k[0], False)):
+                chances[k[0]] = v / (v + result.get((k[0], False))) * 100
+            else:
+                chances[k[0]] = 100
+
+    chances = dict(sorted(chances.items(), key=lambda item: (item[1], item[0][0]), reverse=True))
+    for k, v in chances.items():
+        print(f'{k} \t\t {v:.2f}%')
+
+# winning chance with or without drawing the Joker
+def s_JokerWinChance():
+    result = []
+    iterations = 1_000_000
+
+    for _ in range(iterations):
+        deck = createDeck()
+        shuffle(deck)
+        hand1 = [deck.pop(0) for _ in range(5)]
+        hand2 = [deck.pop(0) for _ in range(5)]
+
+        havejoker = True if 'Joker' in str(hand1) else False
+        win = True if compareHands(hand1, hand2) == 0 else False
+
+        result.append((havejoker, win))
+
+    chances = dict(Counter(result))
+    chances = dict(sorted(chances.items(), key=lambda item: (item[0][0], item[0][1])))
+
+    print(chances)
+    lis_chances = list(chances.values())
+    print(f'When no joker:\n\tWin:\t{lis_chances[1]}\t{lis_chances[1]/(lis_chances[0]+lis_chances[1])*100:.2f}\t%\n',
+          f'\tLoss:\t{lis_chances[0]}\t{lis_chances[0]/(lis_chances[0]+lis_chances[1])*100:.2f}\t%\n',
+          f'When have joker:\n\tWin:\t{lis_chances[3]}\t{lis_chances[3]/(lis_chances[2]+lis_chances[3])*100:.2f}\t%\n',
+          f'\tLoss:\t{lis_chances[2]}\t{lis_chances[2] / (lis_chances[2] + lis_chances[3]) * 100:.2f}\t%\n')
+
+# in a given hand, what's the win rate after swapping 1-5 cards
+def s_WhenToSwap():
+
+    iteration = 20_000
+
+    deck = createDeck()
+    print(deck)
+    hand1ids = [7, 11, 15, 6, 16]
+    discardids = [1, 2]
+
+    hand1 = [deck[i] for i in hand1ids]
+    deck = [deck[i] for i in range(len(deck)) if i not in hand1ids]
+
+    discards = [hand1[i] for i in discardids]
+    print('deck:\t', deck)
+    print(f'hand:\t', hand1)
+    print('discard:', discards)
+    print()
+
+    # calculate the original winrate for later comparison
+
+    result = []
+    for _ in range(iteration):
+        newdeck = deck.copy()
+        shuffle(newdeck)
+
+        hand2 = [newdeck.pop(0) for _ in range(5)]
+        win = True if compareHands(hand1, hand2) == 0 else False
+        result.append(win)
+
+    result = dict(Counter(result))
+
+    print(f'Before:\n\tWin:\t{result[True]}\t{result[True]/iteration*100:.2f} %')
+    print(f'\tFalse:\t{result[False]}\t{result[False]/iteration*100:.2f} %' if result.get(False) else '', end='')
+
+    # discard and redraw
+    discards = len(discardids)
+    hand1 = [hand1[i] for i in range(len(hand1)) if i not in discardids]
+
+
+    print()
+
+
+    result = []
+    for _ in range(iteration):
+        newdeck = deck.copy()
+        shuffle(newdeck)
+
+        newhand1 = hand1.copy()
+        newhand1 += [newdeck.pop(0) for _ in range(discards)]
+
+        hand2 = [newdeck.pop(0) for _ in range(5)]
+        win = True if compareHands(newhand1, hand2) == 0 else False
+        result.append(win)
+
+    result = dict(Counter(result))
+    print(f'After:\n\tWin:\t{result[True]}\t{result[True] / iteration * 100:.2f} %\n',
+      f'\tFalse:\t{result[False]}\t{result[False] / iteration * 100:.2f} %')
+
+
 if __name__ == '__main__':
-    s_ProbOneHand()
+    s_WhenToSwap()
 

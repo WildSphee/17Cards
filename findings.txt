@@ -1,0 +1,105 @@
+
+(9, 'five-of-a-kind'),
+(8, 'straight-flush'),  # (same flower but flush)
+(7, 'four-of-a-kind'),
+(6, 'full-house'),  # (fu lo)
+(5, 'flush'),  # (fa)
+(4, 'straight'),
+(3, 'three-of-a-kind'),
+(2, 'two-pair'),
+(1, 'one-pair')
+
+
+# the probability of getting each type of combo in a hand in the first round
+
+5 M runs
+(3, 'three-of-a-kind') 		 31.05%
+(2, 'two-pair') 		     27.92%
+(1, 'one-pair')     		 24.79%
+(6, 'full-house') 	    	 8.15%
+(4, 'straight') 		     4.08%
+(7, 'four-of-a-kind') 		 3.88%
+(8, 'straight-flush') 		 0.07%
+(9, 'five-of-a-kind') 		 0.06%
+
+# the probability of getting each type of combo in a hand in the first round + details (.3 = A, .2 = K, .1 = Q, .0 = J)
+
+1 M runs
+(2.3, 'two-pair') 	        	 13.97%
+(2.2, 'two-pair') 	        	 9.29%
+(3.0, 'three-of-a-kind') 		 7.79%
+(3.3, 'three-of-a-kind') 		 7.77%
+(3.1, 'three-of-a-kind') 		 7.75%
+(3.2, 'three-of-a-kind') 		 7.73%
+(1.2, 'one-pair')       		 6.23%
+(1.0, 'one-pair') 	        	 6.20%
+(1.3, 'one-pair')       		 6.19%
+(1.1, 'one-pair') 	        	 6.16%
+(2.1, 'two-pair') 	        	 4.69%
+(4.3, 'straight') 	        	 4.07%
+(6.3, 'full-house') 	    	 2.88%
+(6.2, 'full-house') 	    	 2.33%
+(6.1, 'full-house') 	    	 1.75%
+(6.0, 'full-house') 	    	 1.18%
+(7.3, 'four-of-a-kind') 		 0.98%
+(7.2, 'four-of-a-kind') 		 0.98%
+(7.0, 'four-of-a-kind') 		 0.97%
+(7.1, 'four-of-a-kind') 		 0.97%
+(8, 'straight-flush') 	    	 0.06%
+(9.3, 'five-of-a-kind') 		 0.02%
+(9.2, 'five-of-a-kind') 		 0.02%
+(9.1, 'five-of-a-kind') 		 0.02%
+(9.0, 'five-of-a-kind') 		 0.01%
+
+
+# when playing with another player, the chance of winning by combo type
+
+1 M runs
+(9, 'five-of-a-kind') 		 100.00%
+(8, 'straight-flush') 		 100.00%
+(7, 'four-of-a-kind') 		 98.23%
+(4, 'straight') 		     95.56%
+(6, 'full-house') 		     88.46%
+(3, 'three-of-a-kind') 		 74.14%
+(2, 'two-pair') 	     	 32.29%
+(1, 'one-pair') 		     11.88%
+
+# when playing against another player, the chance of winning by combo type + details (.3 = A, .2 = K, .1 = Q, .0 = J)
+1 M runs
+(9.3, 'five-of-a-kind') 		 100.00%
+(9.2, 'five-of-a-kind') 		 100.00%
+(9.1, 'five-of-a-kind') 		 100.00%
+(9.0, 'five-of-a-kind') 		 100.00%
+(8.3, 'straight-flush') 		 100.00%
+(7.3, 'four-of-a-kind') 		 99.96%
+(7.2, 'four-of-a-kind') 		 98.75%
+(7.1, 'four-of-a-kind') 		 97.60%
+(7.0, 'four-of-a-kind') 		 96.41%
+(4.3, 'straight') 		         95.53%
+(6.3, 'full-house') 	       	 95.05%
+(6.2, 'full-house') 		     89.00%
+(3.3, 'three-of-a-kind') 		 86.76%
+(6.1, 'full-house')     		 83.48%
+(3.2, 'three-of-a-kind') 		 78.18%
+(6.0, 'full-house') 	    	 77.28%
+(3.1, 'three-of-a-kind') 		 70.00%
+(3.0, 'three-of-a-kind') 		 61.44%
+(2.3, 'two-pair')    		     39.85%
+(2.2, 'two-pair')   	      	 26.18%
+(1.3, 'one-pair') 	    	     22.37%
+(2.1, 'two-pair')   	    	 21.71%
+(1.2, 'one-pair')   	    	 15.41%
+(1.1, 'one-pair')   	    	 8.39%
+(1.0, 'one-pair')       		 1.68%
+
+
+# when you have a joker, your winning chances
+
+1 M runs
+When no joker:
+	Win:	239138	33.89	%
+ 	Loss:	466444	66.11	%
+ When have joker:
+	Win:	261061	88.67	%
+ 	Loss:	33357	11.33	%
+

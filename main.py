@@ -49,10 +49,8 @@ def handValue(hand) -> tuple:
 
     # count the number of value and flowers in a hand, sort by value
     cardv = Counter([card.v for card in hand])
-    cardv = dict(sorted(cardv.items(), key=lambda item: item[1]))
+    cardv = dict(sorted(cardv.items(), key=lambda item: (item[1], value[item[0]])))
     cardf = Counter([card.f for card in hand])
-
-    # print(cardv, cardf)
 
     isflush = True if len(cardf) == 1 else False
     isstraight = True if (len(cardv) == 4 and havejoker) or len(cardv) == 5 else False
@@ -81,7 +79,10 @@ def handValue(hand) -> tuple:
     else:
         combo_number = 8
 
-    return combos[combo_number], maxv
+
+
+
+    return (combos[combo_number][0] + (value[list(cardv.keys())[-1]] * 0.1), combos[combo_number][1]), maxv
 
 
 def createDeck() -> list:
@@ -204,12 +205,12 @@ def s_JokerWinChance():
 # in a given hand, what's the win rate after swapping 1-5 cards
 def s_WhenToSwap():
 
-    iteration = 20_000
+    iteration = 2_000
 
     deck = createDeck()
     print(deck)
-    hand1ids = [7, 11, 15, 6, 16]
-    discardids = [1, 2]
+    hand1ids = [1, 2, 3, 6, 16]
+    discardids = [0, 1, 2, 3]
 
     hand1 = [deck[i] for i in hand1ids]
     deck = [deck[i] for i in range(len(deck)) if i not in hand1ids]
@@ -234,7 +235,7 @@ def s_WhenToSwap():
     result = dict(Counter(result))
 
     print(f'Before:\n\tWin:\t{result[True]}\t{result[True]/iteration*100:.2f} %')
-    print(f'\tFalse:\t{result[False]}\t{result[False]/iteration*100:.2f} %' if result.get(False) else '', end='')
+    print(f'\tLoss:\t{result[False]}\t{result[False]/iteration*100:.2f} %' if result.get(False) else '', end='')
 
     # discard and redraw
     discards = len(discardids)
@@ -257,10 +258,10 @@ def s_WhenToSwap():
         result.append(win)
 
     result = dict(Counter(result))
-    print(f'After:\n\tWin:\t{result[True]}\t{result[True] / iteration * 100:.2f} %\n',
-      f'\tFalse:\t{result[False]}\t{result[False] / iteration * 100:.2f} %')
+    print(f'After:\n\tWin:\t{result[True]}\t{result[True] / iteration * 100:.2f} %')
+    print(f'\tLoss:\t{result[False]}\t{result[False]/iteration*100:.2f} %' if result.get(False) else '', end='')
 
 
 if __name__ == '__main__':
     s_WhenToSwap()
-
+    
